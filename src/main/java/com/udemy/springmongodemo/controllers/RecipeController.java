@@ -1,15 +1,16 @@
 package com.udemy.springmongodemo.controllers;
 
 import com.udemy.springmongodemo.commands.RecipeCommand;
+import com.udemy.springmongodemo.exceptions.NotFoundException;
 import com.udemy.springmongodemo.services.RecipeService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
+import org.thymeleaf.exceptions.TemplateInputException;
 
 @Slf4j
 @Controller
@@ -64,5 +65,14 @@ public class RecipeController {
         log.debug("Deleting id: " + id);
         recipeService.deleteById(id);
         return "redirect:/";
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler({NotFoundException.class, TemplateInputException.class})
+    public String handleNotFound(Exception exception, Model model){
+        log.error("Handling not found exception");
+        log.error(exception.getMessage());
+        model.addAttribute("exception", exception);
+        return "404Error";
     }
 }
