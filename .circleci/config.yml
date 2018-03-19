@@ -38,6 +38,11 @@ jobs:
             - ~/.gradle
           key: v1-dependencies-{{ checksum "build.gradle" }}
 
+      - run:
+          command: |
+            sudo chmod +x gradlew
+            ./gradlew clean test jacocoTestReport
+
       # run tests!
       - run:
           name: Save test results
